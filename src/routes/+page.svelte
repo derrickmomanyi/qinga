@@ -8,9 +8,20 @@
 	import { NAIROBI, TYPES, typeOf } from '#lib/constants.ts';
 	import { forecastWindow } from '#lib/format.ts';
 	import { centerOf } from '#lib/geolocate.ts';
+	import { onMount } from 'svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
+
+	// On desktop the map is large, so it can be panned and zoomed; on phones it stays a static preview.
+	let wide = $state(false);
+	onMount(() => {
+		const mq = matchMedia('(min-width: 1024px)');
+		const sync = () => (wide = mq.matches);
+		sync();
+		mq.addEventListener('change', sync);
+		return () => mq.removeEventListener('change', sync);
+	});
 
 	const pins = $derived(
 		data.incidents.filter((i) => i.status === 'verified').map((i) => ({ ...i, href: `/incidents/${i.id}` }))
@@ -34,8 +45,8 @@
 
 <LiveRefresh entities={['incident', 'forecast']} />
 
-<div class="phone">
-	<header class="topbar">
+<div class="phone home">
+	<header class="topbar home-top">
 		<a href="/" class="home-link"><Logo size={34} /></a>
 		<div class="row">
 			<a class="icon-btn" href="/learn" aria-label="Safety tips">
@@ -49,9 +60,9 @@
 	</header>
 
 	<main class="content">
-		<section aria-label="Map of active alerts">
+		<section class="map-section" aria-label="Map of active alerts">
 			<div class="map-wrap">
-				<MapView incidents={pins} {zones} height="190px" zoom={11} center={centerOf([...pins, ...zones], NAIROBI)} interactive={false} />
+				<MapView incidents={pins} {zones} height="190px" zoom={11} center={centerOf([...pins, ...zones], NAIROBI)} interactive={wide} />
 				<a class="expand" href="/map" aria-label="Full screen map">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5" /><path d="M20 9V4h-5" /><path d="M4 15v5h5" /><path d="M20 15v5h-5" /></svg>
 				</a>
@@ -275,5 +286,48 @@
 	.actions .btn {
 		padding: 0 10px;
 		white-space: nowrap;
+	}
+
+	/* Tablet: taller map inside the centred card. */
+	@media (min-width: 768px) {
+		.map-section :global(.map) {
+			height: 300px !important;
+		}
+	}
+
+	/* Desktop: big live map on the left, alerts on the right; the site header carries Report / Get SMS alerts. */
+	@media (min-width: 1024px) {
+		.phone.home {
+			max-width: 1440px;
+			margin: 0 auto;
+			border: 0;
+			border-radius: 0;
+			box-shadow: none;
+			overflow: visible;
+		}
+		.home-top,
+		.actions {
+			display: none;
+		}
+		.content {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) 420px;
+			grid-template-rows: auto 1fr;
+			gap: 16px 24px;
+			align-items: start;
+			padding: 24px;
+		}
+		.map-section {
+			grid-row: 1 / span 2;
+			position: sticky;
+			top: calc(var(--nav-h) + 24px);
+		}
+		.map-section :global(.map) {
+			height: calc(100dvh - var(--nav-h) - 96px) !important;
+			min-height: 460px;
+		}
+		.near-title {
+			padding-top: 8px;
+		}
 	}
 </style>

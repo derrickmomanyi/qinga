@@ -66,7 +66,7 @@
 
 <LiveRefresh entities={['incident', 'forecast']} />
 
-<div class="phone">
+<div class="phone map-page">
 	<div class="stage">
 		<h1 class="sr-only">Map of alerts</h1>
 		<MapView incidents={pins} {zones} height="100dvh" {center} zoom={start ? 15 : 12} {selectedId} onselect={(id) => (selectedId = id)} />
@@ -116,9 +116,31 @@
 </div>
 
 <style>
+	/* The full-screen map stays full width on tablets and desktops. */
+	@media (min-width: 768px) {
+		.phone.map-page {
+			max-width: none;
+			margin: 0;
+			border: 0;
+			border-radius: 0;
+			box-shadow: none;
+		}
+		.bottom {
+			right: auto !important;
+			width: 440px;
+			padding-left: 12px;
+			padding-bottom: 12px;
+		}
+		.bottom :global(.sheet) {
+			border-radius: 16px !important;
+		}
+	}
+	.stage :global(.map) {
+		height: 100% !important;
+	}
 	.stage {
 		position: relative;
-		height: 100dvh;
+		height: calc(100dvh - var(--nav-h));
 		overflow: hidden;
 	}
 	.stage :global(.map) {

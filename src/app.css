@@ -15,7 +15,15 @@
 	--blue: #2563eb;
 	--forecast: #1d4ed8;
 	--radius: 12px;
+	/* Height of the desktop public header (0 on phones and tablets). */
+	--nav-h: 0px;
 	color-scheme: light;
+}
+
+@media (min-width: 1024px) {
+	:root {
+		--nav-h: 64px;
+	}
 }
 
 * {
@@ -67,6 +75,22 @@ textarea {
 	display: flex;
 	flex-direction: column;
 	background: var(--bg);
+}
+
+/* Tablet and desktop: public pages sit in a centred card instead of filling a phone screen. */
+@media (min-width: 768px) {
+	.phone {
+		max-width: 720px;
+		min-height: auto;
+		margin: 24px auto 48px;
+		border: 1px solid var(--line);
+		border-radius: 18px;
+		overflow: clip;
+		box-shadow: 0 1px 2px rgba(20, 23, 28, 0.04);
+	}
+	.phone .topbar {
+		top: var(--nav-h);
+	}
 }
 
 .topbar {

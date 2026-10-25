@@ -62,7 +62,7 @@
 	<title>Qinga · Incidents</title>
 </svelte:head>
 
-<div class="cols">
+<div class="desk">
 	<section class="queue" aria-labelledby="queue-title">
 		<h2 id="queue-title">Incoming</h2>
 
@@ -261,9 +261,37 @@
 </div>
 
 <style>
+	/* Phone: one column. Tablet: queue | incident (alerts panel under the incident). Desktop: three columns. */
+	.desk {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 20px;
+		align-items: start;
+	}
+	@media (min-width: 760px) {
+		.desk {
+			grid-template-columns: 250px minmax(0, 1fr);
+		}
+		.desk .side {
+			grid-column: 2;
+		}
+		.queue {
+			position: sticky;
+			top: 16px;
+			max-height: calc(100dvh - 32px);
+			overflow-y: auto;
+			padding-bottom: 4px;
+		}
+	}
+	@media (min-width: 1200px) {
+		.desk {
+			grid-template-columns: 290px minmax(0, 1fr) minmax(320px, 380px);
+		}
+		.desk .side {
+			grid-column: auto;
+		}
+	}
 	.queue {
-		flex: 1 1 300px;
-		max-width: 360px;
 		min-width: 0;
 		display: flex;
 		flex-direction: column;
@@ -322,7 +350,7 @@
 	}
 
 	.incident {
-		flex: 999 1 480px;
+		min-width: 0;
 		display: flex;
 		flex-direction: column;
 		gap: 16px;
@@ -418,8 +446,6 @@
 	}
 
 	.side {
-		flex: 1 1 340px;
-		max-width: 420px;
 		min-width: 0;
 		display: flex;
 		flex-direction: column;
@@ -462,10 +488,6 @@
 	}
 
 	@media (max-width: 860px) {
-		.queue,
-		.side {
-			max-width: none;
-		}
 		.map-col {
 			padding-top: 0;
 		}

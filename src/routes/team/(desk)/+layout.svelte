@@ -84,15 +84,11 @@
 		background: #fff;
 		color: var(--ink);
 	}
-	/* Phone: brand, duty and sign out on the first row; sections on their own row below. */
-	@media (max-width: 700px) {
+	/* Phone and tablet: brand, duty and sign out on the first row; sections on one scrollable row below. */
+	@media (max-width: 1060px) {
 		.team-header .inner {
 			gap: 8px 12px;
 			padding: 8px 16px;
-		}
-		.team-main {
-			padding-left: 16px;
-			padding-right: 16px;
 		}
 		.team-nav {
 			order: 3;
@@ -108,6 +104,12 @@
 		.duty {
 			flex: 1;
 			text-align: right;
+		}
+	}
+	@media (max-width: 700px) {
+		.team-main {
+			padding-left: 16px;
+			padding-right: 16px;
 		}
 	}
 	@media print {

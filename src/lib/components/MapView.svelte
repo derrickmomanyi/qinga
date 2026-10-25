@@ -88,10 +88,30 @@
 			layer = L.layerGroup().addTo(map);
 			draw();
 		});
+		// Leaflet needs telling when its box changes size (layout breakpoints, rotating a phone).
+		const resize = new ResizeObserver(() => map?.invalidateSize());
+		resize.observe(el);
 		return () => {
 			cancelled = true;
+			resize.disconnect();
 			map?.remove();
 		};
+	});
+
+	$effect(() => {
+		// Pages can switch panning/zooming on and off (e.g. home map on desktop vs phone).
+		const on = interactive;
+		if (!map) return;
+		for (const handler of [map.dragging, map.scrollWheelZoom, map.touchZoom, map.doubleClickZoom]) {
+			if (on) handler.enable();
+			else handler.disable();
+		}
+		if (on && !map.zoomControl) {
+			map.zoomControl = L!.control.zoom().addTo(map);
+		} else if (!on && map.zoomControl) {
+			map.zoomControl.remove();
+			map.zoomControl = undefined as unknown as typeof map.zoomControl;
+		}
 	});
 
 	$effect(() => {
