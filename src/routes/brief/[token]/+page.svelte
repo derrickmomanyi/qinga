@@ -18,7 +18,7 @@
 	<meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
-<div class="sheet">
+<div class="sheet" class:wide={data.kind === 'incident'}>
 	<header class="head">
 		<Logo size={30} />
 		<div class="grow">
@@ -44,81 +44,83 @@
 			{#if i.summary}<p class="lead">{i.summary}</p>{/if}
 			{#if i.advice}<p>Public advice: {i.advice}</p>{/if}
 
-			<section>
-				<h2>Details</h2>
-				<dl class="facts">
-					<dt>Type</dt>
-					<dd>{TYPES[typeOf(i.type)].label}{i.subtype ? ` · ${i.subtype}` : ''}</dd>
-					<dt>Severity</dt>
-					<dd>{i.severity ?? 'Not given'}{i.extreme ? ' · marked extreme' : ''}</dd>
-					<dt>People hurt</dt>
-					<dd>{i.casualties ?? 'Not given'}</dd>
-					<dt>Location</dt>
-					<dd>{i.location_label}</dd>
-					<dt>Coordinates</dt>
-					<dd><a href={osm(i.lat, i.lon)} target="_blank" rel="noopener">{coords(i.lat, i.lon)}</a> (OpenStreetMap)</dd>
-					<dt>First reported</dt>
-					<dd>{dayClock(i.created_at)}</dd>
-					<dt>Verified</dt>
-					<dd>
-						{#if i.verified_at}
-							{dayClock(i.verified_at)}{data.verifiedBy ? ` by ${data.verifiedBy} (Qinga)` : ''}{i.confirmed_by ? ` · confirmed by ${i.confirmed_by}` : ''}
-						{:else}
-							Not yet verified
+			<div class="sections">
+				<section class="details">
+					<h2>Details</h2>
+					<dl class="facts">
+						<dt>Type</dt>
+						<dd>{TYPES[typeOf(i.type)].label}{i.subtype ? ` · ${i.subtype}` : ''}</dd>
+						<dt>Severity</dt>
+						<dd>{i.severity ?? 'Not given'}{i.extreme ? ' · marked extreme' : ''}</dd>
+						<dt>People hurt</dt>
+						<dd>{i.casualties ?? 'Not given'}</dd>
+						<dt>Location</dt>
+						<dd>{i.location_label}</dd>
+						<dt>Coordinates</dt>
+						<dd><a href={osm(i.lat, i.lon)} target="_blank" rel="noopener">{coords(i.lat, i.lon)}</a> (OpenStreetMap)</dd>
+						<dt>First reported</dt>
+						<dd>{dayClock(i.created_at)}</dd>
+						<dt>Verified</dt>
+						<dd>
+							{#if i.verified_at}
+								{dayClock(i.verified_at)}{data.verifiedBy ? ` by ${data.verifiedBy} (Qinga)` : ''}{i.confirmed_by ? ` · confirmed by ${i.confirmed_by}` : ''}
+							{:else}
+								Not yet verified
+							{/if}
+						</dd>
+						{#if i.closed_at}
+							<dt>Closed</dt>
+							<dd>{dayClock(i.closed_at)}</dd>
 						{/if}
-					</dd>
-					{#if i.closed_at}
-						<dt>Closed</dt>
-						<dd>{dayClock(i.closed_at)}</dd>
-					{/if}
-				</dl>
-			</section>
+					</dl>
+				</section>
 
-			<section>
-				<h2>Reports ({data.reports.length})</h2>
-				<ol class="reports">
-					{#each data.reports as r (r.id)}
-						<li class="report">
-							<p class="report-head">
-								<b>{dayClock(r.created_at)}</b> · {CHANNEL[r.channel] ?? r.channel} · Ref {r.ref}
-							</p>
-							<p>
-								{#if r.phone && r.phoneDisplay}
-									Phone: <a href="tel:{r.phone}">{r.phoneDisplay}</a>
-								{:else}
-									Phone: anonymous
-								{/if}
-							</p>
-							{#if r.note}<p class="note">“{r.note}”</p>{/if}
-							<p class="small muted">
-								{[r.subtype, r.severity, r.casualties ? `hurt: ${r.casualties}` : null].filter(Boolean).join(' · ') || 'No details given'}
-							</p>
-							{#if r.location_label || (r.lat != null && r.lon != null)}
-								<p class="small">
-									{r.location_label ?? ''}
-									{#if r.lat != null && r.lon != null}
-										<a href={osm(r.lat, r.lon)} target="_blank" rel="noopener">{coords(r.lat, r.lon)}</a>
+				<section class="reports-col">
+					<h2>Reports ({data.reports.length})</h2>
+					<ol class="reports">
+						{#each data.reports as r (r.id)}
+							<li class="report">
+								<p class="report-head">
+									<b>{dayClock(r.created_at)}</b> · {CHANNEL[r.channel] ?? r.channel} · Ref {r.ref}
+								</p>
+								<p>
+									{#if r.phone && r.phoneDisplay}
+										Phone: <a href="tel:{r.phone}">{r.phoneDisplay}</a>
+									{:else}
+										Phone: anonymous
 									{/if}
 								</p>
-							{/if}
-							{#if r.media_path}
-								<p class="small"><a href={mediaUrl(r.media_path)} target="_blank" rel="noopener">Open {r.media_type === 'video' ? 'video' : 'photo'}</a> (not blurred)</p>
-							{/if}
-						</li>
-					{/each}
-				</ol>
-			</section>
-
-			{#if data.updates.length}
-				<section>
-					<h2>Updates</h2>
-					<ul class="updates">
-						{#each data.updates as u (u.id)}
-							<li><b>{dayClock(u.created_at)}</b> · {u.text}</li>
+								{#if r.note}<p class="note">“{r.note}”</p>{/if}
+								<p class="small muted">
+									{[r.subtype, r.severity, r.casualties ? `hurt: ${r.casualties}` : null].filter(Boolean).join(' · ') || 'No details given'}
+								</p>
+								{#if r.location_label || (r.lat != null && r.lon != null)}
+									<p class="small">
+										{r.location_label ?? ''}
+										{#if r.lat != null && r.lon != null}
+											<a href={osm(r.lat, r.lon)} target="_blank" rel="noopener">{coords(r.lat, r.lon)}</a>
+										{/if}
+									</p>
+								{/if}
+								{#if r.media_path}
+									<p class="small"><a href={mediaUrl(r.media_path)} target="_blank" rel="noopener">Open {r.media_type === 'video' ? 'video' : 'photo'}</a> (not blurred)</p>
+								{/if}
+							</li>
 						{/each}
-					</ul>
+					</ol>
 				</section>
-			{/if}
+
+				{#if data.updates.length}
+					<section class="updates-col">
+						<h2>Updates</h2>
+						<ul class="updates">
+							{#each data.updates as u (u.id)}
+								<li><b>{dayClock(u.created_at)}</b> · {u.text}</li>
+							{/each}
+						</ul>
+					</section>
+				{/if}
+			</div>
 		</main>
 	{:else}
 		{@const f = data.forecast}
@@ -163,6 +165,7 @@
 		background: var(--bg);
 	}
 	.sheet {
+		width: calc(100% - 48px);
 		max-width: 820px;
 		margin: 24px auto;
 		padding: 28px 32px 36px;
@@ -172,6 +175,7 @@
 	}
 	@media (max-width: 600px) {
 		.sheet {
+			width: auto;
 			margin: 0;
 			padding: 18px 16px 28px;
 			border: 0;
@@ -279,15 +283,63 @@
 		margin: 0;
 		padding-left: 18px;
 	}
+	.sections {
+		display: flex;
+		flex-direction: column;
+		gap: 22px;
+	}
+
+	/* Desktop: a wider sheet with the facts beside the reports. */
+	@media (min-width: 1024px) {
+		.sheet {
+			margin: 32px auto 48px;
+			padding: 32px 40px 40px;
+		}
+		.sheet.wide {
+			max-width: 1120px;
+		}
+		h1 {
+			font-size: 28px;
+		}
+		.sections {
+			display: grid;
+			grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+			grid-template-rows: auto 1fr;
+			grid-template-areas: 'details reports' 'updates reports';
+			gap: 22px 40px;
+			align-items: start;
+		}
+		.details {
+			grid-area: details;
+		}
+		.reports-col {
+			grid-area: reports;
+		}
+		.updates-col {
+			grid-area: updates;
+		}
+		.facts {
+			grid-template-columns: 128px minmax(0, 1fr);
+		}
+	}
+
 	@media print {
 		:global(body) {
 			background: #fff;
 		}
-		.sheet {
+		.sheet,
+		.sheet.wide {
+			width: auto;
 			margin: 0;
 			padding: 0;
 			border: 0;
 			max-width: none;
+		}
+		.sections {
+			display: flex;
+		}
+		h2 {
+			break-after: avoid;
 		}
 		.print {
 			display: none;

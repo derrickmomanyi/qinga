@@ -182,4 +182,16 @@
 			display: none;
 		}
 	}
+	/* Narrow chart beside the zone list (tablet): same thinning as on phones. */
+	.chart {
+		container-type: inline-size;
+	}
+	@container (max-width: 480px) {
+		.axis span.odd {
+			visibility: hidden;
+		}
+		.value {
+			display: none;
+		}
+	}
 </style>

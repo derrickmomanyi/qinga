@@ -204,43 +204,53 @@
 	<title>Report · Qinga</title>
 </svelte:head>
 
-<div class="phone">
+<!--
+	Phones keep one column in this exact order. On desktop the same blocks are placed with grid areas:
+	details on the left; where, phone and Send on the right. Each wrapper holds blocks that are already
+	next to each other, so the phone order and spacing don't change.
+-->
+<div class="phone report-page">
 	<TopBar title="Report" heading />
 
-	<main class="content">
-		<!-- Quick report: location only, details later. -->
-		<div class="stack">
-			<button type="button" class="quick" onclick={quickReport} disabled={quick === 'locating' || quick === 'sending'}>
-				<span class="bolt">
-					<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z" /></svg>
-				</span>
-				<span class="grow">
-					<b>Quick report</b><br />
-					<span class="sub" aria-live="polite">
-						{#if quick === 'locating'}Finding your location…{:else if quick === 'sending'}Sending…{:else}No time? Send your location now. Add details later.{/if}
+	<div class="page-head">
+		<h1>Report an incident</h1>
+		<p class="lead-text">Tell us what you see. We check every report with Red Cross.</p>
+	</div>
+
+	<main class="content report">
+		<div class="r-main">
+			<!-- Quick report: location only, details later. -->
+			<div class="stack">
+				<button type="button" class="quick" onclick={quickReport} disabled={quick === 'locating' || quick === 'sending'}>
+					<span class="bolt">
+						<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z" /></svg>
 					</span>
-				</span>
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
-			</button>
+					<span class="grow">
+						<b>Quick report</b><br />
+						<span class="sub" aria-live="polite">
+							{#if quick === 'locating'}Finding your location…{:else if quick === 'sending'}Sending…{:else}No time? Send your location now. Add details later.{/if}
+						</span>
+					</span>
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+				</button>
 
-			{#if quick === 'need-area' || (quick === 'sending' && quickArea)}
-				<form class="card stack" onsubmit={sendQuickWithArea}>
-					<label for="quick-area" class="label">We couldn't get your location. Where are you?</label>
-					<select id="quick-area" class="select" bind:value={quickArea}>
-						<option value="">Choose your area</option>
-						{#each data.areas as a (a.id)}<option value={String(a.id)}>{a.name}</option>{/each}
-					</select>
-					<button type="submit" class="btn btn-red" disabled={quick === 'sending'}>
-						{quick === 'sending' ? 'Sending…' : 'Send quick report'}
-					</button>
-				</form>
-			{/if}
-			{#if quickError}<p class="error" role="alert">{quickError}</p>{/if}
-		</div>
+				{#if quick === 'need-area' || (quick === 'sending' && quickArea)}
+					<form class="card stack" onsubmit={sendQuickWithArea}>
+						<label for="quick-area" class="label">We couldn't get your location. Where are you?</label>
+						<select id="quick-area" class="select" bind:value={quickArea}>
+							<option value="">Choose your area</option>
+							{#each data.areas as a (a.id)}<option value={String(a.id)}>{a.name}</option>{/each}
+						</select>
+						<button type="submit" class="btn btn-red" disabled={quick === 'sending'}>
+							{quick === 'sending' ? 'Sending…' : 'Send quick report'}
+						</button>
+					</form>
+				{/if}
+				{#if quickError}<p class="error" role="alert">{quickError}</p>{/if}
+			</div>
 
-		<div class="divider"><span></span>or tell us more<span></span></div>
+			<div class="divider"><span></span>or tell us more<span></span></div>
 
-		<form class="stack form" onsubmit={send} novalidate>
 			<section class="stack" aria-labelledby="what-title">
 				<h2 id="what-title" class="section-title">What happened?</h2>
 				<div class="grid-3">
@@ -306,56 +316,61 @@
 					</div>
 				</div>
 			</section>
+		</div>
 
-			<section class="stack" aria-labelledby="where-title">
-				<h2 id="where-title" class="section-title">Where?</h2>
-				{#if place}
-					<div class="place">
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.5" /></svg>
-						<span class="grow">{place.name}</span>
-						<button type="button" class="link-btn" onclick={changePlace}>Change</button>
-					</div>
-				{:else}
-					<button type="button" id="use-location" class="btn btn-quiet" onclick={useMyLocation} disabled={locating}>
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.5" /></svg>
-						{locating ? 'Finding you…' : 'Use my location'}
-					</button>
-					{#if locError}<p class="small hint" role="alert">{locError}</p>{/if}
-					<div class="field">
-						<label for="area" class="small-label">Or choose your area</label>
-						<select id="area" class="select" bind:value={areaId}>
-							<option value="">Choose area</option>
-							{#each data.areas as a (a.id)}<option value={String(a.id)}>{a.name}</option>{/each}
-						</select>
-					</div>
-				{/if}
-				<div class="field">
-					<label for="landmark" class="small-label">Landmark (optional)</label>
-					<input id="landmark" class="input" bind:value={landmark} placeholder="e.g. near the footbridge" autocomplete="off" />
+		<section class="stack r-where" aria-labelledby="where-title">
+			<h2 id="where-title" class="section-title">Where?</h2>
+			{#if place}
+				<div class="place">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.5" /></svg>
+					<span class="grow">{place.name}</span>
+					<button type="button" class="link-btn" onclick={changePlace}>Change</button>
 				</div>
-			</section>
+			{:else}
+				<button type="button" id="use-location" class="btn btn-quiet" onclick={useMyLocation} disabled={locating}>
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.5" /></svg>
+					{locating ? 'Finding you…' : 'Use my location'}
+				</button>
+				{#if locError}<p class="small hint" role="alert">{locError}</p>{/if}
+				<div class="field">
+					<label for="area" class="small-label">Or choose your area</label>
+					<select id="area" class="select" bind:value={areaId}>
+						<option value="">Choose area</option>
+						{#each data.areas as a (a.id)}<option value={String(a.id)}>{a.name}</option>{/each}
+					</select>
+				</div>
+			{/if}
+			<div class="field">
+				<label for="landmark" class="small-label">Landmark (optional)</label>
+				<!-- form= keeps Enter-to-send working although the field sits outside the form element. -->
+				<input id="landmark" class="input" form="report-form" bind:value={landmark} placeholder="e.g. near the footbridge" autocomplete="off" />
+			</div>
+		</section>
 
-			<section class="field">
-				<label for="note">Anything else? (optional)</label>
-				<textarea id="note" class="textarea" rows="2" bind:value={note} placeholder="What did you see?"></textarea>
-			</section>
+		<section class="field r-note">
+			<label for="note">Anything else? (optional)</label>
+			<textarea id="note" class="textarea" rows="2" bind:value={note} placeholder="What did you see?"></textarea>
+		</section>
 
-			<section class="field">
-				<label for="phone">Your phone number</label>
-				<input id="phone" class="input" type="tel" inputmode="tel" autocomplete="tel" placeholder="07XX XXX XXX" bind:value={phone} disabled={anonymous} />
-				<label class="check"><input type="checkbox" bind:checked={anonymous} />Report anonymously</label>
-				<p class="small muted">With a number we can call to confirm. Anonymous reports take longer to check.</p>
-			</section>
+		<div class="r-send">
+			<form id="report-form" class="stack form" onsubmit={send} novalidate>
+				<section class="field">
+					<label for="phone">Your phone number</label>
+					<input id="phone" class="input" type="tel" inputmode="tel" autocomplete="tel" placeholder="07XX XXX XXX" bind:value={phone} disabled={anonymous} />
+					<label class="check"><input type="checkbox" bind:checked={anonymous} />Report anonymously</label>
+					<p class="small muted">With a number we can call to confirm. Anonymous reports take longer to check.</p>
+				</section>
 
-			{#if error}<p id="form-error" class="error" role="alert" tabindex="-1">{error}</p>{/if}
+				{#if error}<p id="form-error" class="error" role="alert" tabindex="-1">{error}</p>{/if}
 
-			<button type="submit" class="btn btn-red send" disabled={sending}>{sending ? 'Sending…' : 'Send report'}</button>
-		</form>
+				<button type="submit" class="btn btn-red send" disabled={sending}>{sending ? 'Sending…' : 'Send report'}</button>
+			</form>
 
-		<p class="footer">
-			No data? SMS <b>{SHORTCODE_LABEL}</b> or WhatsApp <b>{WHATSAPP_LABEL}</b><br />
-			<b>In danger now?</b> Call <a href="tel:999">999</a> or <a href="tel:112">112</a>.
-		</p>
+			<p class="footer">
+				No data? SMS <b>{SHORTCODE_LABEL}</b> or WhatsApp <b>{WHATSAPP_LABEL}</b><br />
+				<b>In danger now?</b> Call <a href="tel:999">999</a> or <a href="tel:112">112</a>.
+			</p>
+		</div>
 	</main>
 </div>
 
@@ -521,5 +536,102 @@
 		padding: 10px 2px;
 		margin: -10px 0;
 		font-weight: 700;
+	}
+
+	/* Phone spacing: the wrappers repeat the old gaps (20px around the divider, 22px between sections). */
+	.report {
+		gap: 22px;
+	}
+	.r-main {
+		display: flex;
+		flex-direction: column;
+		gap: 22px;
+	}
+	.divider {
+		margin: -2px 0;
+	}
+	.r-send {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+	.page-head {
+		display: none;
+	}
+
+	/* Desktop: details on the left, where / phone / Send in a side column. */
+	@media (min-width: 1024px) {
+		.report-page > :global(.topbar) {
+			display: none;
+		}
+		.page-head {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+			padding: 28px 24px 0;
+		}
+		.page-head h1 {
+			font-size: 28px;
+			font-weight: 800;
+			line-height: 1.2;
+		}
+		/*
+		 * Row 2 is flexible, so the tall details column takes up the slack there and
+		 * "Where?" and the Send card stay together at the top of the side column.
+		 */
+		.report {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(340px, 400px);
+			grid-template-rows: auto 1fr auto;
+			grid-template-areas:
+				'main where'
+				'main send'
+				'note send';
+			gap: 20px 40px;
+			align-items: start;
+		}
+		.r-main {
+			grid-area: main;
+		}
+		.r-where {
+			grid-area: where;
+		}
+		.r-note {
+			grid-area: note;
+		}
+		.r-send {
+			grid-area: send;
+		}
+		.r-where,
+		.r-send .form {
+			padding: 20px;
+			border: 1px solid var(--line);
+			border-radius: 16px;
+			background: var(--surface);
+			box-shadow: 0 1px 2px rgba(20, 23, 28, 0.04);
+		}
+		.r-send .form {
+			gap: 18px;
+		}
+		.quick {
+			min-height: 76px;
+			padding: 14px 18px;
+		}
+		.quick b {
+			font-size: 17px;
+		}
+		.sub {
+			font-size: 14px;
+		}
+		.media,
+		.add label {
+			height: 120px;
+		}
+		.r-note .textarea {
+			min-height: 96px;
+		}
+		.footer {
+			font-size: 13px;
+		}
 	}
 </style>

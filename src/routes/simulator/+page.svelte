@@ -164,7 +164,7 @@
 		</p>
 
 		<div class="layout">
-			<section class="device" aria-label="Demo phone">
+			<div class="controls">
 				<div class="field">
 					<label for="sim-phone">Your number</label>
 					<input id="sim-phone" class="input" type="tel" inputmode="tel" bind:value={phone} autocomplete="off" />
@@ -174,7 +174,9 @@
 					<button type="button" role="tab" id="tab-sms" aria-selected={tab === 'sms'} aria-controls="sim-pane" onclick={() => (tab = 'sms')}>SMS</button>
 					<button type="button" role="tab" id="tab-whatsapp" aria-selected={tab === 'whatsapp'} aria-controls="sim-pane" onclick={() => (tab = 'whatsapp')}>WhatsApp</button>
 				</div>
+			</div>
 
+			<section class="device" aria-label="Demo phone">
 				<div class="screen" class:wa={tab === 'whatsapp'} id="sim-pane" role="tabpanel" aria-labelledby="tab-{tab}">
 					<div class="to">
 						{#if tab === 'sms'}
@@ -192,7 +194,9 @@
 								<span class="meta">{clock(m.created_at)}{m.status === 'failed' ? ' · not delivered' : ''}</span>
 							</div>
 						{:else}
-							<p class="empty">{validNumber ? 'No messages yet. Try one of the examples below.' : 'Enter a phone number to start.'}</p>
+							<p class="empty">
+								{#if validNumber}No messages yet. Try one of the examples<span class="below">{' below'}</span>.{:else}Enter a phone number to start.{/if}
+							</p>
 						{/each}
 					</div>
 
@@ -244,16 +248,16 @@
 
 				{#if sendError}<p class="error" role="alert">{sendError}</p>{/if}
 				{#if loadError}<p class="small muted">{loadError}</p>{/if}
-
-				<div class="stack">
-					<span class="label">Try</span>
-					<div class="row wrap fills">
-						{#each QUICK_FILLS as q (q)}
-							<button type="button" class="choice pill" onclick={() => fill(q)}>{q}</button>
-						{/each}
-					</div>
-				</div>
 			</section>
+
+			<div class="stack try">
+				<span class="label">Try</span>
+				<div class="row wrap fills">
+					{#each QUICK_FILLS as q (q)}
+						<button type="button" class="choice pill" onclick={() => fill(q)}>{q}</button>
+					{/each}
+				</div>
+			</div>
 
 			<aside class="card help" aria-labelledby="help-title">
 				<h2 id="help-title" class="section-title">What you can text</h2>
@@ -298,21 +302,17 @@
 		font-size: 14px;
 		font-weight: 700;
 	}
-	.layout {
-		display: grid;
-		gap: 20px;
-		align-items: start;
-	}
-	@media (min-width: 820px) {
-		.layout {
-			grid-template-columns: minmax(0, 440px) minmax(0, 1fr);
-		}
-	}
+	/* Phone: one column. Wider: the phone on the left; number, channel, examples and help on the right. */
+	.layout,
+	.controls,
 	.device {
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
 		min-width: 0;
+	}
+	.help {
+		margin-top: 8px;
 	}
 	.tabs {
 		display: grid;
@@ -519,5 +519,77 @@
 		font-size: 14px;
 		line-height: 1.45;
 		color: var(--ink-2);
+	}
+	@media (min-width: 820px) {
+		.layout {
+			display: grid;
+			grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+			grid-template-rows: auto auto 1fr;
+			grid-template-areas: 'device controls' 'device try' 'device help';
+			gap: 20px 24px;
+			align-items: start;
+		}
+		.controls {
+			grid-area: controls;
+		}
+		.device {
+			grid-area: device;
+		}
+		.try {
+			grid-area: try;
+		}
+		.help {
+			grid-area: help;
+			margin-top: 0;
+		}
+		.log {
+			height: 420px;
+		}
+		/* The examples sit beside the phone here, not below it. */
+		.below {
+			display: none;
+		}
+	}
+	/* Desktop: a page title like the other pages (no second bar under the site header) and the full page width. */
+	@media (min-width: 1024px) {
+		.page > :global(.topbar) {
+			position: static;
+			max-width: 1180px;
+			min-height: 0;
+			margin: 0 auto;
+			padding: 28px 24px 4px;
+			background: transparent;
+			border-bottom: 0;
+		}
+		.page > :global(.topbar h1) {
+			font-size: 28px;
+		}
+		.main {
+			max-width: 1180px;
+			padding: 20px 24px 56px;
+			gap: 20px;
+		}
+		.banner {
+			align-self: flex-start;
+		}
+		.layout {
+			gap: 24px 40px;
+		}
+		/* Number and channel side by side. */
+		.controls {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			align-items: end;
+			gap: 12px 16px;
+		}
+		.controls .input {
+			min-height: 52px;
+		}
+		.log {
+			height: 460px;
+		}
+		.help {
+			padding: 22px 24px;
+		}
 	}
 </style>

@@ -93,6 +93,88 @@ textarea {
 	}
 }
 
+/*
+ * Desktop: public pages become full web pages, not a phone card.
+ * Pages lay their content out with the layout helpers below; on phones and
+ * tablets those helpers collapse to a single column, so mobile is unchanged.
+ */
+@media (min-width: 1024px) {
+	.phone {
+		max-width: 1180px;
+		margin: 0 auto;
+		border: 0;
+		border-radius: 0;
+		box-shadow: none;
+		overflow: visible;
+	}
+	.phone > .topbar {
+		position: static;
+		min-height: 0;
+		padding: 28px 24px 4px;
+		background: transparent;
+		border-bottom: 0;
+	}
+	.phone > .topbar h1,
+	.phone > .topbar .title {
+		font-size: 28px;
+		font-weight: 800;
+	}
+	.phone > .content,
+	.phone > main {
+		padding: 20px 24px 56px;
+	}
+}
+
+/* Layout helpers (single column below 1024px). */
+.split,
+.split-even,
+.tiles {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.split > *,
+.split-even > *,
+.tiles > * {
+	min-width: 0;
+}
+
+@media (min-width: 1024px) {
+	/* Main column plus a sticky side column (actions, map, who to call). */
+	.split {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
+		gap: 32px;
+		align-items: start;
+	}
+	.split-aside {
+		position: sticky;
+		top: calc(var(--nav-h) + 24px);
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+	.split-even {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 32px;
+		align-items: start;
+	}
+	.tiles {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: 20px;
+	}
+	/* Large page intro used at the top of desktop pages. */
+	.lead-text {
+		max-width: 640px;
+		font-size: 17px;
+		line-height: 1.5;
+		color: var(--ink-2);
+	}
+}
+
 .topbar {
 	position: sticky;
 	top: 0;

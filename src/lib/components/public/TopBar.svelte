@@ -51,4 +51,10 @@
 		font-size: 17px;
 		font-weight: 800;
 	}
+	/* Desktop: the site header handles navigation, so pages show just their title. */
+	@media (min-width: 1024px) {
+		.lead > a {
+			display: none;
+		}
+	}
 </style>

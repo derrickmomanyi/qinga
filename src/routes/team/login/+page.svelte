@@ -222,4 +222,45 @@
 			padding: 40px 16px;
 		}
 	}
+	/* Tablet: brand band on top, form below, both full width. */
+	@media (min-width: 601px) and (max-width: 1023px) {
+		.brand,
+		.form-side {
+			flex-basis: 100%;
+		}
+		.brand {
+			padding: 48px;
+			gap: 32px;
+		}
+		.form-side {
+			align-items: flex-start;
+			padding: 48px;
+		}
+	}
+	/* Desktop: two equal panels side by side. */
+	@media (min-width: 1024px) {
+		.login {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+		.partners {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 150px));
+			gap: 12px 16px;
+		}
+		.partners > span:first-child {
+			grid-column: 1 / -1;
+		}
+		.logo-slot {
+			width: auto;
+		}
+	}
+	@media (min-width: 1024px) and (max-width: 1279px) {
+		.brand {
+			padding: 48px;
+		}
+		h1 {
+			font-size: 38px;
+		}
+	}
 </style>

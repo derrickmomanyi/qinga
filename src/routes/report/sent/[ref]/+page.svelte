@@ -13,7 +13,11 @@
 	<title>Report sent · Qinga</title>
 </svelte:head>
 
-<div class="phone">
+<!--
+	Phones: confirmation, then the call box straight away, then tips. Desktop places the same
+	blocks with grid areas (confirmation and next steps left, help right) without moving them in the page.
+-->
+<div class="phone sent-page">
 	<TopBar close smart={false} />
 
 	<main class="content">
@@ -32,7 +36,7 @@
 		</section>
 
 		{#if data.type === 'fire'}
-			<section class="card stack" aria-labelledby="wait-title">
+			<section class="card stack wait" aria-labelledby="wait-title">
 				<h2 id="wait-title" class="h2">While you wait</h2>
 				<ol class="steps">
 					<li><span class="n">1</span><span><b>Get out.</b> Leave the building or area fast.</span></li>
@@ -41,7 +45,7 @@
 				</ol>
 			</section>
 		{:else if data.type === 'disaster'}
-			<section class="card stack" aria-labelledby="wait-title">
+			<section class="card stack wait" aria-labelledby="wait-title">
 				<h2 id="wait-title" class="h2">While you wait</h2>
 				<ol class="steps">
 					<li><span class="n">1</span><span><b>Move to higher ground.</b> Get away from rivers and low places.</span></li>
@@ -49,7 +53,7 @@
 				</ol>
 			</section>
 		{:else}
-			<section class="card stack" aria-labelledby="wait-title">
+			<section class="card stack wait" aria-labelledby="wait-title">
 				<h2 id="wait-title" class="h2">While you wait: SSS</h2>
 				<ol class="steps">
 					<li><span class="n">1</span><span><b>Safe.</b> Check for traffic, fire or fuel before you go close.</span></li>
@@ -151,5 +155,64 @@
 	.home {
 		margin-top: auto;
 		min-height: 54px;
+	}
+
+	@media (min-width: 1024px) {
+		.sent-page > :global(.topbar) {
+			display: none;
+		}
+		/*
+		 * Two independent stacks from one list. Row 3 is flexible and only the help box and
+		 * "Back to home" cross it, so it is just as tall as the help box needs: the left stack
+		 * stays together and the tips start right under the help box.
+		 */
+		.content {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(360px, 440px);
+			grid-template-rows: auto auto 1fr auto;
+			grid-template-areas:
+				'done urgent'
+				'next urgent'
+				'home urgent'
+				'home wait';
+			gap: 24px 48px;
+			align-items: start;
+			padding-top: 40px;
+		}
+		.done {
+			grid-area: done;
+			align-items: flex-start;
+			gap: 12px;
+			text-align: left;
+		}
+		.tick {
+			width: 64px;
+			height: 64px;
+		}
+		.big-title {
+			font-size: 36px;
+		}
+		.small-14 {
+			font-size: 16px;
+		}
+		.urgent {
+			grid-area: urgent;
+			padding: 22px;
+		}
+		.wait {
+			grid-area: wait;
+			padding: 22px;
+		}
+		.next {
+			grid-area: next;
+			padding: 18px 20px;
+			font-size: 16px;
+		}
+		.home {
+			grid-area: home;
+			justify-self: start;
+			margin-top: 0;
+			padding: 0 28px;
+		}
 	}
 </style>

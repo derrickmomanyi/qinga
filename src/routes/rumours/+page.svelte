@@ -68,72 +68,76 @@
 
 <LiveRefresh entities={['rumour']} />
 
-<div class="phone">
+<div class="phone rumours-page">
 	<TopBar title="Is this true?" />
 
 	<main class="content">
-		<div class="stack intro">
-			<h1 class="title">Heard something? Check it here.</h1>
-			<p class="muted-ink">We check with Red Cross and tell you what's true.</p>
-		</div>
-
-		{#if done}
-			<div class="card thanks" role="status">
-				<b>Thanks. We're checking it.</b>
-				<span class="muted-ink">It will show below when we know.</span>
-				<button type="button" class="btn btn-outline btn-sm" onclick={() => (done = false)}>Check something else</button>
-			</div>
-		{:else}
-			<form class="stack" onsubmit={check}>
-				<label for="rumour" class="sr-only">Message or link to check</label>
-				<textarea id="rumour" class="textarea" rows="3" placeholder="Paste the message or link" bind:value={text}></textarea>
-				{#if file && preview}
-					<div class="shot">
-						<img src={preview} alt="Your screenshot" />
-						<span class="grow small">{file.name}</span>
-						<button type="button" class="icon-btn plain" aria-label="Remove screenshot" onclick={clearFile}>
-							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12" /><path d="M18 6L6 18" /></svg>
-						</button>
-					</div>
-				{/if}
-				<div class="grid-2">
-					<div class="pick">
-						<input id="shot" type="file" accept="image/*" class="sr-only" onchange={pickFile} />
-						<label for="shot" class="btn btn-outline">
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><circle cx="9" cy="10" r="2" /><path d="M21 16l-5-5-8 8" /></svg>
-							Screenshot
-						</label>
-					</div>
-					<button type="submit" class="btn btn-red" disabled={sending}>{sending ? 'Sending…' : 'Check'}</button>
+		<div class="split-even">
+			<div class="check-col">
+				<div class="stack intro">
+					<h1 class="title">Heard something? Check it here.</h1>
+					<p class="muted-ink">We check with Red Cross and tell you what's true.</p>
 				</div>
-				{#if error}<p class="error" role="alert">{error}</p>{/if}
-				<p class="small muted center">Or forward it on WhatsApp to {WHATSAPP_LABEL}</p>
-			</form>
-		{/if}
 
-		<section class="stack" aria-labelledby="recent-title">
-			<h2 id="recent-title" class="h2">Recently checked</h2>
-			{#each data.rumours as r (r.id)}
-				{#if r.status === 'true' && r.incident_id}
-					<a class="card item link" href="/incidents/{r.incident_id}">
-						<StatusChip status="true" />
-						<span class="item-title">{r.text}</span>
-						<span class="verdict">{r.verdict}</span>
-					</a>
-				{:else}
-					<div class="card item">
-						<StatusChip status={r.status} />
-						<span class="item-title">{r.text}</span>
-						<span class="verdict">{r.status === 'checking' ? 'Our team is checking with Red Cross.' : r.verdict}</span>
-						{#if r.status === 'false'}
-							<a class="correction" href={correction(r)} target="_blank" rel="noopener">Share the correction</a>
-						{/if}
+				{#if done}
+					<div class="card thanks" role="status">
+						<b>Thanks. We're checking it.</b>
+						<span class="muted-ink">It will show below when we know.</span>
+						<button type="button" class="btn btn-outline btn-sm" onclick={() => (done = false)}>Check something else</button>
 					</div>
+				{:else}
+					<form class="stack check-form" onsubmit={check}>
+						<label for="rumour" class="sr-only">Message or link to check</label>
+						<textarea id="rumour" class="textarea" rows="3" placeholder="Paste the message or link" bind:value={text}></textarea>
+						{#if file && preview}
+							<div class="shot">
+								<img src={preview} alt="Your screenshot" />
+								<span class="grow small">{file.name}</span>
+								<button type="button" class="icon-btn plain" aria-label="Remove screenshot" onclick={clearFile}>
+									<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12" /><path d="M18 6L6 18" /></svg>
+								</button>
+							</div>
+						{/if}
+						<div class="grid-2">
+							<div class="pick">
+								<input id="shot" type="file" accept="image/*" class="sr-only" onchange={pickFile} />
+								<label for="shot" class="btn btn-outline">
+									<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><circle cx="9" cy="10" r="2" /><path d="M21 16l-5-5-8 8" /></svg>
+									Screenshot
+								</label>
+							</div>
+							<button type="submit" class="btn btn-red" disabled={sending}>{sending ? 'Sending…' : 'Check'}</button>
+						</div>
+						{#if error}<p class="error" role="alert">{error}</p>{/if}
+						<p class="small muted center">Or forward it on WhatsApp to {WHATSAPP_LABEL}</p>
+					</form>
 				{/if}
-			{:else}
-				<p class="muted">Nothing checked yet.</p>
-			{/each}
-		</section>
+			</div>
+
+			<section class="stack recent" aria-labelledby="recent-title">
+				<h2 id="recent-title" class="h2">Recently checked</h2>
+				{#each data.rumours as r (r.id)}
+					{#if r.status === 'true' && r.incident_id}
+						<a class="card item link" href="/incidents/{r.incident_id}">
+							<StatusChip status="true" />
+							<span class="item-title">{r.text}</span>
+							<span class="verdict">{r.verdict}</span>
+						</a>
+					{:else}
+						<div class="card item">
+							<StatusChip status={r.status} />
+							<span class="item-title">{r.text}</span>
+							<span class="verdict">{r.status === 'checking' ? 'Our team is checking with Red Cross.' : r.verdict}</span>
+							{#if r.status === 'false'}
+								<a class="correction" href={correction(r)} target="_blank" rel="noopener">Share the correction</a>
+							{/if}
+						</div>
+					{/if}
+				{:else}
+					<p class="muted">Nothing checked yet.</p>
+				{/each}
+			</section>
+		</div>
 	</main>
 </div>
 
@@ -235,5 +239,53 @@
 		font-size: 14px;
 		font-weight: 700;
 		text-decoration: none;
+	}
+	.check-col {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	/* Desktop: check form on the left (stays in view), recent checks on the right. */
+	@media (min-width: 1024px) {
+		.split-even {
+			gap: 48px;
+		}
+		.check-col {
+			position: sticky;
+			top: calc(var(--nav-h) + 24px);
+			gap: 24px;
+		}
+		.intro {
+			gap: 10px;
+		}
+		.intro .muted-ink {
+			font-size: 17px;
+		}
+		.check-form {
+			gap: 14px;
+			padding: 20px;
+			border: 1px solid var(--line);
+			border-radius: 16px;
+			background: var(--surface);
+		}
+		.check-form .textarea {
+			min-height: 140px;
+		}
+		.thanks {
+			padding: 20px;
+		}
+		.recent {
+			gap: 12px;
+		}
+		.h2 {
+			font-size: 20px;
+		}
+		.item {
+			padding: 16px 18px;
+		}
+		.item.link:hover {
+			border-color: var(--ink);
+		}
 	}
 </style>

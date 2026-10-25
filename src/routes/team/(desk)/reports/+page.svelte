@@ -114,10 +114,10 @@
 							</a>
 						</td>
 						<td>
-							{at(r.first_report_at ?? r.created_at)}<br />
+							<span class="nw">{at(r.first_report_at ?? r.created_at)}</span><br />
 							<span class="muted">{channelList(r.channels) || 'No reports'} · {plural(r.report_count, 'report')}</span>
 						</td>
-						<td>{who}{#if when}<br /><span class="muted">{when}</span>{/if}</td>
+						<td>{who}{#if when}<br /><span class="muted nw">{when}</span>{/if}</td>
 						<td>
 							{#if r.confirmed_by}{r.confirmed_by}
 							{:else if r.status === 'rejected'}<span class="muted">Not needed</span>
@@ -125,12 +125,12 @@
 						</td>
 						<td>
 							{#if r.alert_at}
-								{at(r.alert_at)}<br /><span class="muted">{n(r.alert_delivered)} of {n(r.alert_recipients)} delivered</span>
+								<span class="nw">{at(r.alert_at)}</span><br /><span class="muted nw">{n(r.alert_delivered)} of {n(r.alert_recipients)} delivered</span>
 							{:else}<span class="muted">Not sent</span>{/if}
 						</td>
 						<td>
 							{#if r.brief_at}
-								{at(r.brief_at)}<br /><span class="muted">{r.brief_opened_at ? `Opened ${at(r.brief_opened_at)}` : 'Not opened yet'}</span>
+								<span class="nw">{at(r.brief_at)}</span><br /><span class="muted nw">{r.brief_opened_at ? `Opened ${at(r.brief_opened_at)}` : 'Not opened yet'}</span>
 							{:else}<span class="muted">Not sent</span>{/if}
 						</td>
 						<td>
@@ -225,15 +225,45 @@
 	.pick[aria-current='true'] b {
 		text-decoration-thickness: 2px;
 	}
+	/* Phone and tablet: trail, then who received it. Desktop: side by side. */
 	.details {
-		display: flex;
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		gap: 20px;
-		align-items: flex-start;
+		align-items: start;
 		scroll-margin-top: 12px;
 	}
-	.trail {
-		flex: 999 1 560px;
+	@media (min-width: 1024px) {
+		.details {
+			grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+		}
+		/* Desktop: the table fits the page, no sideways scrolling. */
+		table.data {
+			min-width: 0;
+		}
+		td:first-child {
+			min-width: 160px;
+		}
+	}
+	/* Tablet and up: times and counts never split over two lines. */
+	@media (min-width: 768px) {
+		.nw {
+			white-space: nowrap;
+		}
+	}
+	/* Small desktop: tighter cells so all seven columns fit. */
+	@media (min-width: 1024px) and (max-width: 1279px) {
+		table.data th,
+		table.data td {
+			padding-left: 10px;
+			padding-right: 10px;
+		}
+	}
+	@media (min-width: 1280px) {
+		/* Room for every time, name and count on one line; incident and status may wrap. */
+		td:nth-child(n + 2):nth-child(-n + 6) {
+			white-space: nowrap;
+		}
 	}
 	.trail ol {
 		margin: 14px 0 0;
@@ -253,8 +283,6 @@
 		flex: 0 0 96px;
 	}
 	.received {
-		flex: 1 1 340px;
-		max-width: 460px;
 		display: flex;
 		flex-direction: column;
 		gap: 14px;
@@ -269,9 +297,6 @@
 		font-size: 14px;
 	}
 	@media (max-width: 760px) {
-		.received {
-			max-width: none;
-		}
 		.time {
 			flex-basis: 72px;
 		}

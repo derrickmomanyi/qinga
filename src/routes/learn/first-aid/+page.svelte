@@ -18,7 +18,7 @@
 	<main class="content">
 		<div class="intro">
 			<h1 class="big-title">At an accident: SSS</h1>
-			<p class="ink2">Three steps before help arrives.</p>
+			<p class="ink2 lead-text">Three steps before help arrives.</p>
 		</div>
 
 		<ol class="steps">
@@ -30,21 +30,25 @@
 			{/each}
 		</ol>
 
-		<section class="then">
-			<h2>Then</h2>
-			<ul>
-				<li>Stay with them and keep them warm.</li>
-				<li>Don't move them unless they're in danger.</li>
-				<li>Don't give food or drink.</li>
-			</ul>
-		</section>
+		<div class="after">
+			<section class="then">
+				<h2>Then</h2>
+				<ul>
+					<li>Stay with them and keep them warm.</li>
+					<li>Don't move them unless they're in danger.</li>
+					<li>Don't give food or drink.</li>
+				</ul>
+			</section>
 
-		<div class="grid-2">
-			<a class="btn btn-red" href="tel:999">Call 999</a>
-			<a class="btn btn-outline" href="tel:1199">Red Cross 1199</a>
+			<div class="calls">
+				<div class="grid-2">
+					<a class="btn btn-red" href="tel:999">Call 999</a>
+					<a class="btn btn-outline" href="tel:1199">Red Cross 1199</a>
+				</div>
+
+				<p class="small muted center">Want to learn more? Kenya Red Cross runs first aid courses.</p>
+			</div>
 		</div>
-
-		<p class="small muted center">Want to learn more? Kenya Red Cross runs first aid courses.</p>
 	</main>
 </div>
 
@@ -117,5 +121,79 @@
 	}
 	.center {
 		text-align: center;
+	}
+	.after,
+	.calls {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	/* Desktop: the three steps side by side, then "Then" next to the call buttons. */
+	@media (min-width: 1024px) {
+		.content {
+			gap: 24px;
+			padding-top: 8px;
+		}
+		.intro h1 {
+			font-size: 22px;
+		}
+		.ink2 {
+			font-size: 17px;
+		}
+		.steps {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 20px;
+		}
+		.step {
+			flex-direction: column;
+			gap: 16px;
+			padding: 24px;
+			font-size: 16px;
+			line-height: 1.5;
+		}
+		.step b {
+			display: inline-block;
+			margin-bottom: 4px;
+			font-size: 22px;
+		}
+		.letter {
+			flex: none;
+			width: 72px;
+			height: 72px;
+			border-radius: 18px;
+			font-size: 38px;
+		}
+		.after {
+			display: grid;
+			grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+			gap: 20px;
+			align-items: stretch;
+		}
+		.then {
+			padding: 22px 24px;
+		}
+		.then h2 {
+			font-size: 18px;
+		}
+		.then ul {
+			font-size: 16px;
+			line-height: 1.7;
+		}
+		.calls {
+			gap: 12px;
+		}
+		.calls .grid-2 {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 12px;
+		}
+		.grid-2 .btn {
+			min-height: 60px;
+			font-size: 18px;
+		}
+		.calls .center {
+			text-align: left;
+		}
 	}
 </style>

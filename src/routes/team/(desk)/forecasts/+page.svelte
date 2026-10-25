@@ -42,7 +42,7 @@
 	<title>Qinga · Forecasts</title>
 </svelte:head>
 
-<div class="cols">
+<div class="layout">
 	<section class="zones" aria-labelledby="zones-title">
 		<h2 id="zones-title">Watch zones · Nairobi</h2>
 		{#each data.zones as z (z.id)}
@@ -153,9 +153,39 @@
 </div>
 
 <style>
+	/* Phone: one column. Tablet: zones | selected zone (SMS panel under it). Desktop: three columns. */
+	.layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 20px;
+		align-items: start;
+	}
+	@media (min-width: 760px) {
+		.layout {
+			grid-template-columns: 240px minmax(0, 1fr);
+		}
+		.side {
+			grid-column: 2;
+		}
+		.zones {
+			position: sticky;
+			top: 16px;
+			max-height: calc(100dvh - 32px);
+			overflow-y: auto;
+			padding-bottom: 4px;
+		}
+	}
+	@media (min-width: 1200px) {
+		.layout {
+			grid-template-columns: 280px minmax(0, 1fr) minmax(320px, 380px);
+		}
+		.side {
+			grid-column: auto;
+			position: sticky;
+			top: 16px;
+		}
+	}
 	.zones {
-		flex: 1 1 280px;
-		max-width: 340px;
 		min-width: 0;
 		display: flex;
 		flex-direction: column;
@@ -181,7 +211,6 @@
 		border-color: var(--ink);
 	}
 	.main {
-		flex: 999 1 480px;
 		display: flex;
 		flex-direction: column;
 		gap: 18px;
@@ -243,8 +272,6 @@
 		min-height: 44px;
 	}
 	.side {
-		flex: 1 1 340px;
-		max-width: 420px;
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
@@ -258,11 +285,5 @@
 		background: #fff7ed;
 		border-left: 4px solid var(--orange);
 		font-size: 14px;
-	}
-	@media (max-width: 860px) {
-		.zones,
-		.side {
-			max-width: none;
-		}
 	}
 </style>

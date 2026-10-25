@@ -39,64 +39,76 @@
 
 <LiveRefresh entities={['incident']} />
 
-<div class="phone">
+<!--
+	Phones: one column in this order. Desktop places the same blocks with grid rows:
+	photo, text and details on the left; map and who to call on the right.
+-->
+<div class="phone incident-page">
 	<TopBar>
 		<button type="button" class="icon-btn" aria-label="Share" onclick={share}>
 			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3" /><path d="M7 8l5-5 5 5" /><path d="M5 13v7h14v-7" /></svg>
 		</button>
 	</TopBar>
 
-	<figure class="photo" style:background={data.photo ? '#4B5563' : t.tint} style:color={data.photo ? '#fff' : t.ink}>
-		{#if data.photo}
-			{#if isVideo(data.photo.path, data.photo.type)}
-				<video src={mediaUrl(data.photo.path)} class="media-thumb blurred" muted playsinline preload="metadata" aria-hidden="true"></video>
-			{:else}
-				<img src={mediaUrl(data.photo.path)} alt="" class="media-thumb blurred" />
-			{/if}
-			<figcaption>Photo from a reporter · blurred for privacy</figcaption>
-		{:else}
-			<TypeIcon type={incident.type} size={48} stroke={1.6} />
-			<figcaption class="sr-only">No photo</figcaption>
-		{/if}
-	</figure>
+	<!-- Desktop only: the top bar (with its back button) is hidden there. -->
+	<a class="crumb" href="/">
+		<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+		Live map
+	</a>
 
 	<main class="content">
-		<div class="stack">
-			<IncidentChips {incident} all />
-			<h1 class="big-title">{incident.title}</h1>
-			{#if incident.summary}<p class="lead">{incident.summary}</p>{/if}
-			{#if incident.advice}<p class="advice">{incident.advice}</p>{/if}
-			{#if incident.status === 'closed'}<p class="closed">This is over. {clock(incident.closed_at)}</p>{/if}
-		</div>
+		<div class="i-main">
+			<figure class="photo" class:has-photo={!!data.photo} style:background={data.photo ? '#4B5563' : t.tint} style:color={data.photo ? '#fff' : t.ink}>
+				{#if data.photo}
+					{#if isVideo(data.photo.path, data.photo.type)}
+						<video src={mediaUrl(data.photo.path)} class="media-thumb blurred" muted playsinline preload="metadata" aria-hidden="true"></video>
+					{:else}
+						<img src={mediaUrl(data.photo.path)} alt="" class="media-thumb blurred" />
+					{/if}
+					<figcaption>Photo from a reporter · blurred for privacy</figcaption>
+				{:else}
+					<TypeIcon type={incident.type} size={48} stroke={1.6} />
+					<figcaption class="sr-only">No photo</figcaption>
+				{/if}
+			</figure>
 
-		{#if incident.verified_at}
-			<div class="verified">
-				<span class="check-dot">
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg>
-				</span>
-				<span>
-					Verified with Kenya Red Cross · {clock(incident.verified_at)}
-					{#if incident.confirmed_by}<br /><span class="small">Confirmed by {incident.confirmed_by}</span>{/if}
-				</span>
+			<div class="stack">
+				<IncidentChips {incident} all />
+				<h1 class="big-title">{incident.title}</h1>
+				{#if incident.summary}<p class="lead">{incident.summary}</p>{/if}
+				{#if incident.advice}<p class="advice">{incident.advice}</p>{/if}
+				{#if incident.status === 'closed'}<p class="closed">This is over. {clock(incident.closed_at)}</p>{/if}
 			</div>
-		{/if}
 
-		<section class="card" aria-label="Details">
-			<dl class="details">
-				<dt>What happened</dt>
-				<dd>{incident.subtype ?? t.label}</dd>
-				<dt>Where</dt>
-				<dd>{incident.location_label}</dd>
-				{#if incident.severity}
-					<dt>How serious</dt>
-					<dd>{incident.severity}</dd>
-				{/if}
-				{#if incident.casualties}
-					<dt>People hurt</dt>
-					<dd>{incident.casualties}</dd>
-				{/if}
-			</dl>
-		</section>
+			{#if incident.verified_at}
+				<div class="verified">
+					<span class="check-dot">
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg>
+					</span>
+					<span>
+						Verified with Kenya Red Cross · {clock(incident.verified_at)}
+						{#if incident.confirmed_by}<br /><span class="small">Confirmed by {incident.confirmed_by}</span>{/if}
+					</span>
+				</div>
+			{/if}
+
+			<section class="card" aria-label="Details">
+				<dl class="details">
+					<dt>What happened</dt>
+					<dd>{incident.subtype ?? t.label}</dd>
+					<dt>Where</dt>
+					<dd>{incident.location_label}</dd>
+					{#if incident.severity}
+						<dt>How serious</dt>
+						<dd>{incident.severity}</dd>
+					{/if}
+					{#if incident.casualties}
+						<dt>People hurt</dt>
+						<dd>{incident.casualties}</dd>
+					{/if}
+				</dl>
+			</section>
+		</div>
 
 		<div class="map-wrap">
 			<MapView incidents={pin} height="140px" center={{ lat: incident.lat, lon: incident.lon }} zoom={15} interactive={false} />
@@ -112,7 +124,7 @@
 			</div>
 		{/if}
 
-		<section class="stack" aria-labelledby="call-title">
+		<section class="stack calls" aria-labelledby="call-title">
 			<h2 id="call-title" class="h2">Who to call</h2>
 			<CallButtons type={incident.type} />
 			{#if type === 'accident'}
@@ -125,10 +137,19 @@
 </div>
 
 <style>
+	.i-main {
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
+	}
+	.crumb {
+		display: none;
+	}
+	/* Full width under the top bar on phones: cancel the content padding. */
 	.photo {
 		position: relative;
 		height: 170px;
-		margin: 0;
+		margin: -18px -16px 0;
 		overflow: hidden;
 		display: flex;
 		align-items: center;
@@ -244,5 +265,106 @@
 	.share {
 		margin-top: auto;
 		min-height: 54px;
+	}
+
+	@media (min-width: 1024px) {
+		.incident-page > :global(.topbar) {
+			display: none;
+		}
+		/*
+		 * Left: photo, text, details, latest, share. Right: map, who to call.
+		 * Row 2 is flexible and only the left block and "Who to call" cross it, so each
+		 * column stays packed at the top. Latest and share fill the next free rows on the left.
+		 */
+		.content {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(340px, 400px);
+			grid-template-rows: auto 1fr;
+			gap: 20px 40px;
+			align-items: start;
+			padding-top: 8px;
+		}
+		.i-main {
+			grid-column: 1;
+			grid-row: 1 / 3;
+		}
+		.map-wrap {
+			grid-column: 2;
+			grid-row: 1;
+		}
+		.calls {
+			grid-column: 2;
+			grid-row: 2 / span 3;
+			gap: 12px;
+			padding: 20px;
+			border: 1px solid var(--line);
+			border-radius: 16px;
+			background: var(--surface);
+		}
+		.latest,
+		.share {
+			grid-column: 1;
+		}
+		.crumb {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			align-self: flex-start;
+			min-height: 44px;
+			margin: 16px 24px 0 18px;
+			padding: 0 6px;
+			color: var(--ink-2);
+			font-size: 15px;
+			font-weight: 600;
+			text-decoration: none;
+		}
+		.crumb:hover {
+			color: var(--ink);
+		}
+		.photo {
+			height: 220px;
+			margin: 0;
+			border-radius: 16px;
+		}
+		.photo.has-photo {
+			height: 340px;
+		}
+		.big-title {
+			font-size: 32px;
+		}
+		.lead {
+			max-width: 65ch;
+			font-size: 18px;
+		}
+		.advice {
+			max-width: 65ch;
+			font-size: 16px;
+		}
+		.details {
+			grid-template-columns: 140px minmax(0, 1fr);
+			gap: 10px 16px;
+			font-size: 16px;
+		}
+		.card {
+			padding: 18px 20px;
+		}
+		.map-wrap :global(.map) {
+			height: 320px !important;
+			border-radius: 16px;
+		}
+		/* Top corner, so it doesn't cover the map credits. */
+		.expand {
+			top: 10px;
+			bottom: auto;
+		}
+		.photo :global(svg) {
+			width: 64px;
+			height: 64px;
+		}
+		.share {
+			justify-self: start;
+			margin-top: 0;
+			padding: 0 24px;
+		}
 	}
 </style>
