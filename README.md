@@ -22,6 +22,12 @@ npm run build
 npm start            # node build, port 3000 (PORT=...)
 ```
 
+## Deploy
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/derrickmomanyi/qinga)
+
+`render.yaml` sets up a free Render web service. Render asks for a `DEMO_PASSWORD` for the team accounts. The free plan sleeps after 15 minutes idle, so the first visit takes about a minute, and it resets to fresh dummy data on every restart. For data that persists, use a paid instance with a disk and set `QINGA_DATA_DIR` to the disk's mount path.
+
 ## Demo accounts (team desk at `/team`)
 
 | Email | Role |
