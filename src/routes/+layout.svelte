@@ -13,7 +13,7 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<title>Qinga · Spot the danger! Okoa maisha!</title>
+	<title>Qinga · Spot Danger, Okoa Maisha</title>
 </svelte:head>
 
 {#if publicPage}

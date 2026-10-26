@@ -31,8 +31,7 @@
 <div class="login">
 	<section class="brand">
 		<div class="mark">
-			<Logo size={60} dark full />
-			<span class="slogan">Spot the danger! Okoa maisha!</span>
+			<Logo size={88} dark slogan />
 		</div>
 		<div class="pitch">
 			<h1>Verified emergency alerts for Kenya</h1>
@@ -114,11 +113,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
-	}
-	.slogan {
-		font-size: 16px;
-		font-weight: 700;
-		color: #fca5a5;
 	}
 	.pitch {
 		display: flex;

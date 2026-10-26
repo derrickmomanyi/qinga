@@ -1,4 +1,4 @@
-# Qinga — Spot the danger! Okoa maisha!
+# Qinga — Spot Danger, Okoa Maisha
 
 A working prototype of **Qinga**, a verified emergency-alert service for Nairobi. People report floods and other natural disasters, road accidents and fires. The Qinga team checks each report with **Kenya Red Cross** on the ground, then sends short SMS alerts to people nearby. Red Cross gets the full details.
 
