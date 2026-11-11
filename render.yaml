@@ -9,7 +9,12 @@ services:
     region: frankfurt
     branch: main
     autoDeploy: true
-    buildCommand: npm ci --include=dev && npm run build
+    # npm is used here on purpose: Render's Node image has npm but not necessarily pnpm, and
+    # corepack may not be writable, so npm installs the exact pnpm version first (pnpm 12.15.0
+    # needs Node >=18; NODE_VERSION below is 22). Render sets NODE_ENV=production for builds, so
+    # --prod=false keeps the dev dependencies (vite, svelte-kit) that the build needs.
+    buildCommand: npm install -g pnpm@12.15.0 && pnpm install --frozen-lockfile --prod=false && pnpm run build
+    # npm start only runs the "start" script (node build); it does not need pnpm at runtime.
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:

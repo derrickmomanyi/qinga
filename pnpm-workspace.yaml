@@ -1,0 +1,12 @@
+packages:
+  - '.'
+
+# Was engine-strict=true in .npmrc, which pnpm 12 does not read. Refuses to install on a Node
+# that does not satisfy package.json "engines" (node >=22.13).
+engineStrict: true
+
+# No dependency in the lockfile has an install script (checked: none of the installed packages
+# declare preinstall/install/postinstall, and rolldown, lightningcss and fsevents ship prebuilt
+# binaries), so there is nothing to allow or block in allowBuilds. If a future dependency adds
+# one, pnpm will list it under `pnpm ignored-builds`; decide it here with a comment.
+# The project's own `prepare` script (svelte-kit sync) still runs on install.

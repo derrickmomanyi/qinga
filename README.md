@@ -9,17 +9,17 @@ The data is dummy data, but every flow really works: reports, grouping, verifica
 Requires **Node 22.13+** (it uses Node's built-in SQLite).
 
 ```bash
-npm install
-npm run dev          # http://localhost:5173
+pnpm install
+pnpm dev             # http://localhost:5173
 ```
 
-The first start creates `data/qinga.db` with dummy data: about 420 subscribers, sample incidents and rumours. To start again from clean data, run `npm run reset-data` and restart.
+The first start creates `data/qinga.db` with dummy data: about 420 subscribers, sample incidents and rumours. To start again from clean data, run `pnpm reset-data` and restart.
 
 Production build:
 
 ```bash
-npm run build
-npm start            # node build, port 3000 (PORT=...)
+pnpm build
+pnpm start           # node build, port 3000 (PORT=...)
 ```
 
 ## Deploy

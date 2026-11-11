@@ -3,8 +3,9 @@
 Verified emergency alerts for Nairobi (disasters, accidents, fire). Design source: the "Qinga" Claude design canvas (claude.ai/artifact/VKCe94a7ZWYauaB97JhRpL).
 
 ## Commands
-- `npm run dev` (port 5173) · `npm run check` · `npm run build` then `npm start`
-- `npm run reset-data` deletes `data/` so the next start reseeds dummy data
+- Package manager is pnpm (`pnpm install`); do not use npm or add package-lock.json.
+- `pnpm dev` (port 5173) · `pnpm check` · `pnpm build` then `pnpm start`
+- `pnpm reset-data` deletes `data/` so the next start reseeds dummy data
 
 ## Conventions
 - SvelteKit 3: no `$lib` alias. Import with `#lib/...` and include the extension (`#lib/server/incidents/incidents.service.ts`, `#lib/components/Logo.svelte`). Server modules use relative imports.
